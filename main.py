@@ -10,13 +10,17 @@ from tkinter.ttk import*
 from tkinter.scrolledtext import ScrolledText
 
 window = Tk()
+window.title("점메추")
+window.iconphoto(True, PhotoImage(file="icon.png"))
 
-def stop(event=None):
-    window.quit()
 
-window.geometry("480x640+0+0")
+window.geometry("480x640+400+300")
 window.resizable(False, False)
 
 
-window.bind('<Escape>', stop) # tikinter page에 가면 알 수 있다.
+menu_interface = Frame(master=window)
+menu_interface.pack()
+
+
+window.bind('<Escape>', window.quit())
 window.mainloop()
