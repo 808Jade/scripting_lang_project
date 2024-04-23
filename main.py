@@ -8,6 +8,7 @@ from logging import info as info, debug as debug, warning as warning
 from tkinter import*
 from tkinter.ttk import*
 from tkinter.scrolledtext import ScrolledText
+from datetime import datetime
 
 window = Tk()
 window.title("점메추")
@@ -17,9 +18,29 @@ window.iconphoto(True, PhotoImage(file="icon.png"))
 window.geometry("480x640+400+300")
 window.resizable(False, False)
 
-
+########## menu interface ##########
 menu_interface = Frame(master=window)
 menu_interface.pack()
+
+
+########## recommend button ##########
+recommend_button = Button(master=window, text="추천 받기!", width=20, padding=10)
+recommend_button.place(x=240, y=320, anchor="center")
+
+
+########## direct Input box ##########
+direct_input_label = Label(master=window, text="직접 입력하기(Enter)", font=('Consolas',12))
+direct_input_label.place(x=20,y=480)
+direct_input_box = Frame(master=window, borderwidth=5, width=20, height=1, relief=GROOVE)
+entry = Entry(direct_input_box, font=('Consolas',12))
+entry.pack()
+direct_input_box.place(x=20,y=500)
+
+
+########## date label ##########
+today = datetime.today().strftime("%Y년 %m월 %d일")
+todays_date_label = Label(master=window, text=today, font=('Consolas', 20), background='skyblue')
+todays_date_label.place(x=20,y=550)
 
 
 window.bind('<Escape>', window.quit())
