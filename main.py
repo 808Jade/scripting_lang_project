@@ -18,21 +18,28 @@ window.iconphoto(True, PhotoImage(file="icon.png"))
 window.geometry("480x640+400+300")
 window.resizable(False, False)
 
-########## menu interface ##########
-menu_interface = Frame(master=window)
-menu_interface.pack()
-
+########## menu interface label ##########
+menu_interface_label = Label(master=window, width=100)
+menu_interface_label.place(x=40,y=20,anchor="center")
 
 ########## recommend button ##########
-recommend_button = Button(master=window, text="추천 받기!", width=30, padding=20)
+def recommend(event=None):
+    logging.info(f'recommend button clicked')
+
+recommend_button = Button(master=window, text="추천 받기!", width=30, padding=20, command=recommend)
 recommend_button.place(x=240, y=320, anchor="center")
 
 
 ########## direct Input box ##########
+def direct_input(event=None):
+    new_text = entry.get()
+    logging.info(f'new input : {new_text}')
+
 direct_input_label = Label(master=window, text="직접 입력하기(Enter)", font=('Consolas',12))
 direct_input_label.place(x=20,y=490)
 direct_input_box = Frame(master=window, borderwidth=5, width=30, height=1, relief=GROOVE)
 entry = Entry(direct_input_box, font=('Consolas',12))
+entry.bind('<Return>', direct_input)
 entry.pack()
 direct_input_box.place(x=20,y=510)
 
@@ -43,7 +50,10 @@ todays_date_label = Label(master=window, text=today, font=('Consolas', 20), back
 todays_date_label.place(x=20,y=550)
 
 ########## Calendar button ##########
-calendar_button = Button(master=window, text="캘린더로 이동", width=19, padding=35)
+def move_to_calendar(event=None):
+    logging.info(f'calendar button clicked')
+
+calendar_button = Button(master=window, text="캘린더로 이동", width=19, padding=35, command=move_to_calendar)
 calendar_button.place(x=250, y=490)
 
 
