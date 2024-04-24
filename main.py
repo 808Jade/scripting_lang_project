@@ -40,8 +40,9 @@ def direct_input(event=None):
 
 direct_input_label = ttk.Label(master=window, text="메뉴 직접 입력하기(Enter)", font=('Consolas',12))
 direct_input_label.place(x=20,y=490)
-direct_input_box = tk.Frame(master=window, borderwidth=5, width=30, height=1, relief="groove")
-entry = ttk.Entry(direct_input_box, font=('Consolas',12))
+
+direct_input_box = tk.Frame(master=window, borderwidth=5, width=30, height=10, relief="groove")
+entry = ttk.Entry(direct_input_box, font=('Consolas',15))
 entry.bind('<Return>', direct_input)
 entry.pack()
 direct_input_box.place(x=20,y=510)
@@ -49,8 +50,8 @@ direct_input_box.place(x=20,y=510)
 
 ########## date label ##########
 today = datetime.today().strftime("%Y년 %m월 %d일(%a)")
-todays_date_label = ttk.Label(master=window, text=today, font=('Consolas', 20), background='#FF9933')
-todays_date_label.place(x=20,y=590)
+todays_date_label = ttk.Label(master=window, text=today, font=('Consolas', 20))
+todays_date_label.place(x=20,y=570)
 
 ########## Calendar button ##########
 def move_to_calendar(event=None):
@@ -59,8 +60,8 @@ def move_to_calendar(event=None):
 calendar_image = tk.PhotoImage(file='calendar_icon.png')
 calendar_image = calendar_image.subsample(4, 4)
 
-calendar_button = tk.Button(master=window, image=calendar_image, command=move_to_calendar)
-calendar_button.place(x=320, y=490)
+calendar_button = tk.Button(master=window, image=calendar_image, command=move_to_calendar, bg="#F0F0F0", cursor='right_side',borderwidth=0, highlightthickness=0)
+calendar_button.place(x=330, y=490)
 
 ########## 아/점/저 Radiobutton ##########
 
