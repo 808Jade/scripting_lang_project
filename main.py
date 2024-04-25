@@ -64,7 +64,22 @@ calendar_button = tk.Button(master=window, image=calendar_image, command=move_to
 calendar_button.place(x=330, y=490)
 
 ########## 아/점/저 Radiobutton ##########
-morning_button = tk.Button(master=window, )
+breakfast_image = tk.PhotoImage(file='breakfast_icon.png')
+breakfast_image = breakfast_image.subsample(6,6)
+breakfast_button = tk.Button(master=window, image=breakfast_image)
+breakfast_button.place(x=95,y=370)
 
-window.bind('<Escape>', window.quit())
+lunch_image = tk.PhotoImage(file='lunch_icon.png')
+lunch_image = lunch_image.subsample(6,6)
+lunch_button = tk.Button(master=window, image=lunch_image)
+lunch_button.place(x=195,y=370)
+
+dinner_image = tk.PhotoImage(file='dinner_icon.png')
+dinner_image = dinner_image.subsample(6,6)
+dinner_button = tk.Button(master=window, image=dinner_image)
+dinner_button.place(x=295,y=370)
+
+
+
+window.bind('<Escape>', lambda event: window.quit())
 window.mainloop()
