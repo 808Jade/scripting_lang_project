@@ -8,8 +8,7 @@ from logging import info as info, debug as debug, warning as warning
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.scrolledtext import ScrolledText
-from datetime import datetime
-
+from datetime import datetime, timedelta
 
 ########## window ##########
 window = tk.Tk()
@@ -67,6 +66,8 @@ class CalendarButton(tk.Button):
         self.place(x=330, y=490)
         self.flag = False
 
+        self.calendar_window = None  # 캘린더 창의 참조를 저장할 변수
+
     def clicked(self):
         logging.info(f'calendar button clicked')
         if not self.flag:
@@ -74,27 +75,47 @@ class CalendarButton(tk.Button):
             self.image = self.image.subsample(4, 4)
             self['image'] = self.image
             self.update()
-            calender_window = Calendar()
+            if self.calendar_window is None:  # 캘린더 창이 열려있지 않은 경우
+                self.calendar_window = Calendar(master=self.master)  # 캘린더 창 생성
             self.flag = True
+        else:
+            self.calendar_close()  # 캘린더 창이 열려있는 경우 닫기
 
     def calendar_close(self):
-        self.flag = False
+        if self.calendar_window is not None:
+            self.calendar_window.destroy()  # 캘린더 창 닫기
+            self.calendar_window = None
+            self.flag = False
         self.image = tk.PhotoImage(file='calendar_icon.png')
         self.image = self.image.subsample(4, 4)
         self['image'] = self.image
         self.update()
 
 
-########## Calendar button ##########
+########## Calendar ##########
 class Calendar(tk.Toplevel):
     def __init__(self, master=None, **kw):
         super().__init__(master, **kw)
         self.title("점메추 캘린더")
-        self.iconphoto(True, tk.PhotoImage(file="calendar_icon.png"))
+        self.iconphoto(False, tk.PhotoImage(file="calendar_icon.png"))
         self.geometry("480x640+{}+{}".format(self.master.winfo_x()+490, self.master.winfo_y()))
         self.resizable(False,False)
         self.protocol("WM_DELETE_WINDOW", self.calendar_destroy)
         self.bind('<Escape>', lambda event: self.calendar_destroy())
+
+        self.create_calendar()
+
+    def create_calendar(self):
+        # 현재 날짜
+        today = datetime.now()
+
+        # 캘린더 그리드 생성
+        for i in range(6):
+            for j in range(7):
+                date = today + timedelta(days=(i * 7 + j))
+                label = tk.Label(self, text=date.day)
+                label.grid(row=i, column=j, padx=24, pady=40)  # 패딩을 조정하여 더 많은 간격을 확보
+
 
     def calendar_close(self):
         pass
