@@ -86,6 +86,19 @@ class BreakfastButton(tk.Button):
         logging.info('breakfast_button_clicked')
         BLD_index.change('breakfast')
         recommend_button.update_text(BLD_index.index)
+        self.image = tk.PhotoImage(file='breakfast_icon.png')
+        self.image = self.image.subsample(6, 6)
+        self['image'] = self.image
+        self.update()
+
+        lunch_button.off()
+        dinner_button.off()
+
+    def off(self):
+        self.image = tk.PhotoImage(file='breakfast_icon_b.png')
+        self.image = self.image.subsample(6, 6)
+        self['image'] = self.image
+        self.update()
 
 
 class LunchButton(tk.Button):
@@ -101,6 +114,19 @@ class LunchButton(tk.Button):
         logging.info('Lunch_button_clicked')
         BLD_index.change('lunch')
         recommend_button.update_text(BLD_index.index)
+        self.image = tk.PhotoImage(file='lunch_icon.png')
+        self.image = self.image.subsample(6, 6)
+        self['image'] = self.image
+        self.update()
+
+        dinner_button.off()
+        breakfast_button.off()
+
+    def off(self):
+        self.image = tk.PhotoImage(file='lunch_icon_b.png')
+        self.image = self.image.subsample(6, 6)
+        self['image'] = self.image
+        self.update()
 
 
 class DinnerButton(tk.Button):
@@ -116,7 +142,19 @@ class DinnerButton(tk.Button):
         logging.info('Dinner_button_clicked')
         BLD_index.change('dinner')
         recommend_button.update_text(BLD_index.index)
+        self.image = tk.PhotoImage(file='dinner_icon.png')
+        self.image = self.image.subsample(6, 6)
+        self['image'] = self.image
+        self.update()
 
+        lunch_button.off()
+        breakfast_button.off()
+
+    def off(self):
+        self.image = tk.PhotoImage(file='dinner_icon_b.png')
+        self.image = self.image.subsample(6, 6)
+        self['image'] = self.image
+        self.update()
 
 
 ########## BLD index ##########
