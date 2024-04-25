@@ -64,7 +64,7 @@ calendar_button = tk.Button(master=window, image=calendar_image, command=move_to
 calendar_button.place(x=330, y=490)
 
 ########## 아/점/저 Radiobutton ##########
-
+morning_button = tk.Button(master=window, )
 
 window.bind('<Escape>', window.quit())
 window.mainloop()
