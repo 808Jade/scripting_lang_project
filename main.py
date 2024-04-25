@@ -1,3 +1,4 @@
+import calendar
 import logging
 logging.basicConfig(
     level=logging.INFO,
@@ -106,16 +107,26 @@ class Calendar(tk.Toplevel):
         self.create_calendar()
 
     def create_calendar(self):
-        # 현재 날짜
+        # 오늘 날짜
         today = datetime.now()
+        year, month = today.year, today.month
+
+        # 월 레이블 생성
+        month_label = tk.Label(self, text=f"{year}년 {month}월", font=("Arial", 14))
+        month_label.place(x=200, y=580)
 
         # 캘린더 그리드 생성
-        for i in range(6):
-            for j in range(7):
-                date = today + timedelta(days=(i * 7 + j))
-                label = tk.Label(self, text=date.day)
-                label.grid(row=i, column=j, padx=24, pady=40)  # 패딩을 조정하여 더 많은 간격을 확보
-
+        cal = calendar.Calendar()
+        for i, week in enumerate(cal.monthdayscalendar(today.year, today.month)):
+            for j, day in enumerate(week):
+                if day == 0:
+                    day = "-"
+                if day == today.day:
+                    # 오늘 날짜에 하이라이트 추가
+                    label = tk.Label(self, text=day, bg="yellow")
+                else:
+                    label = tk.Label(self, text=day)
+                label.grid(row=i, column=j, padx=24, pady=42)
 
     def calendar_close(self):
         pass
