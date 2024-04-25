@@ -65,10 +65,44 @@ class CalendarButton(tk.Button):
         self['highlightthickness'] = 0
         self['command'] = self.clicked
         self.place(x=330, y=490)
+        self.flag = False
 
     def clicked(self):
         logging.info(f'calendar button clicked')
+        if not self.flag:
+            self.image = tk.PhotoImage(file='calendar_icon_b.png')
+            self.image = self.image.subsample(4, 4)
+            self['image'] = self.image
+            self.update()
+            calender_window = Calendar()
+            self.flag = True
 
+    def calendar_close(self):
+        self.flag = False
+        self.image = tk.PhotoImage(file='calendar_icon.png')
+        self.image = self.image.subsample(4, 4)
+        self['image'] = self.image
+        self.update()
+
+
+########## Calendar button ##########
+class Calendar(tk.Toplevel):
+    def __init__(self, master=None, **kw):
+        super().__init__(master, **kw)
+        self.title("점메추 캘린더")
+        self.iconphoto(True, tk.PhotoImage(file="calendar_icon.png"))
+        self.geometry("480x640+{}+{}".format(self.master.winfo_x()+490, self.master.winfo_y()))
+        self.resizable(False,False)
+        self.protocol("WM_DELETE_WINDOW", self.calendar_destroy)
+        self.bind('<Escape>', lambda event: self.calendar_destroy())
+
+    def calendar_close(self):
+        pass
+
+    def calendar_destroy(self):
+        self.destroy()
+
+        calendar_button.calendar_close() # have to fix
 
 
 
@@ -91,8 +125,8 @@ class BreakfastButton(tk.Button):
         self['image'] = self.image
         self.update()
 
-        lunch_button.off()
-        dinner_button.off()
+        lunch_button.off()  # have to fix
+        dinner_button.off() # have to fix
 
     def off(self):
         self.image = tk.PhotoImage(file='breakfast_icon_b.png')
@@ -119,8 +153,8 @@ class LunchButton(tk.Button):
         self['image'] = self.image
         self.update()
 
-        dinner_button.off()
-        breakfast_button.off()
+        dinner_button.off()     # have to fix
+        breakfast_button.off()  # have to fix
 
     def off(self):
         self.image = tk.PhotoImage(file='lunch_icon_b.png')
@@ -147,8 +181,8 @@ class DinnerButton(tk.Button):
         self['image'] = self.image
         self.update()
 
-        lunch_button.off()
-        breakfast_button.off()
+        lunch_button.off()      # have to fix
+        breakfast_button.off()  # have to fix
 
     def off(self):
         self.image = tk.PhotoImage(file='dinner_icon_b.png')
