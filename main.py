@@ -64,21 +64,48 @@ calendar_button = tk.Button(master=window, image=calendar_image, command=move_to
 calendar_button.place(x=330, y=490)
 
 ########## 아/점/저 Radiobutton ##########
+def init_bld_index():
+    current_time = datetime.now().time()
+    hour = current_time.hour
+
+    if 6 <= hour < 11:
+        return 1  # 아침 시간
+    elif 11 <= hour < 17:
+        return 2  # 점심 시간
+    else:
+        return 3  # 저녁 시간
+
+BLD_index = init_bld_index()
+
+def breakfast_button_clicked(event=None):
+    global BLD_index
+    BLD_index = 1
+    logging.info(f'breakfast_button_clicked / index - {BLD_index}')
+
 breakfast_image = tk.PhotoImage(file='breakfast_icon.png')
 breakfast_image = breakfast_image.subsample(6,6)
-breakfast_button = tk.Button(master=window, image=breakfast_image)
+breakfast_button = tk.Button(master=window, image=breakfast_image, command=breakfast_button_clicked)
 breakfast_button.place(x=95,y=370)
+
+def lunch_button_clicked(event=None):
+    global BLD_index
+    BLD_index = 2
+    logging.info(f'lunch_button_clicked / index - {BLD_index}')
 
 lunch_image = tk.PhotoImage(file='lunch_icon.png')
 lunch_image = lunch_image.subsample(6,6)
-lunch_button = tk.Button(master=window, image=lunch_image)
+lunch_button = tk.Button(master=window, image=lunch_image, command=lunch_button_clicked)
 lunch_button.place(x=195,y=370)
+
+def dinner_button_clicked(event=None):
+    global BLD_index
+    BLD_index = 3
+    logging.info(f'dinner_button_clicked / index - {BLD_index}')
 
 dinner_image = tk.PhotoImage(file='dinner_icon.png')
 dinner_image = dinner_image.subsample(6,6)
-dinner_button = tk.Button(master=window, image=dinner_image)
+dinner_button = tk.Button(master=window, image=dinner_image, command=dinner_button_clicked)
 dinner_button.place(x=295,y=370)
-
 
 
 window.bind('<Escape>', lambda event: window.quit())
