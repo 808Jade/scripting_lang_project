@@ -23,12 +23,18 @@ window.resizable(False, False)
 ########## Global Variables ##########
 
 
-########## menu interface label ##########
-def update_menu_interface(event=None):
-    pass
+########## menu interface button ##########
+class MenuInterfaceButton(tk.Button):
+    def __init__(self, master=None, **kw):
+        super().__init__(master, **kw)
+        self.image = tk.PhotoImage(file='exfood.png')
+        self.image = self.image.subsample(5, 5)
+        self['image'] = self.image
+        self['command'] = self.clicked
+        self.place(x=120, y=20)
 
-menu_interface_label = ttk.Label(master=window, width=100)
-menu_interface_label.place(x=40, y=20, anchor="center")
+    def clicked(self):
+        logging.info(f'Interface button clicked')
 
 
 ########## direct Input box ##########
@@ -278,6 +284,7 @@ class RecommendButton(ttk.Button):
 
 ########## main ##########
 BLD_index = BLDIndex()
+menu_interface_button = MenuInterfaceButton()
 recommend_button = RecommendButton()
 calendar_button = CalendarButton()
 
