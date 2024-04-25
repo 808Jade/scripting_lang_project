@@ -28,7 +28,7 @@ def update_menu_interface(event=None):
     pass
 
 menu_interface_label = ttk.Label(master=window, width=100)
-menu_interface_label.place(x=40,y=20,anchor="center")
+menu_interface_label.place(x=40, y=20, anchor="center")
 
 
 ########## direct Input box ##########
@@ -37,13 +37,13 @@ def direct_input(event=None):
     logging.info(f'new input : {new_text}')
 
 direct_input_label = ttk.Label(master=window, text="메뉴 직접 입력하기(Enter)", font=('Consolas',12))
-direct_input_label.place(x=20,y=490)
+direct_input_label.place(x=20, y=490)
 
 direct_input_box = tk.Frame(master=window, borderwidth=5, width=30, height=10, relief="groove")
 entry = ttk.Entry(direct_input_box, font=('Consolas',15))
 entry.bind('<Return>', direct_input)
 entry.pack()
-direct_input_box.place(x=20,y=510)
+direct_input_box.place(x=20, y=510)
 
 
 ########## date label ##########
@@ -70,7 +70,6 @@ class CalendarButton(tk.Button):
         logging.info(f'calendar button clicked')
 
 
-calendar_button = CalendarButton()
 
 
 ########## 아/점/저 Radiobutton ##########
@@ -86,6 +85,7 @@ class BreakfastButton(tk.Button):
     def clicked(self):
         logging.info('breakfast_button_clicked')
         BLD_index.change('breakfast')
+        recommend_button.update_text(BLD_index.index)
 
 
 class LunchButton(tk.Button):
@@ -100,7 +100,7 @@ class LunchButton(tk.Button):
     def clicked(self):
         logging.info('Lunch_button_clicked')
         BLD_index.change('lunch')
-
+        recommend_button.update_text(BLD_index.index)
 
 
 class DinnerButton(tk.Button):
@@ -115,12 +115,11 @@ class DinnerButton(tk.Button):
     def clicked(self):
         logging.info('Dinner_button_clicked')
         BLD_index.change('dinner')
-
-breakfast_button = BreakfastButton()
-lunch_button = LunchButton()
-dinner_button = DinnerButton()
+        recommend_button.update_text(BLD_index.index)
 
 
+
+########## BLD index ##########
 class BLDIndex():
     def __init__(self):
         current_time = datetime.now().time()
@@ -138,20 +137,19 @@ class BLDIndex():
         logging.info(f'BLD_index changed - {self.index}')
 
 
-BLD_index = BLDIndex()
 
 
 ########## recommend button ##########
 class RecommendButton(ttk.Button):
     def __init__(self, master=None, **kw):
         super().__init__(master, **kw)
-        self.update_recommendation()  # 초기 텍스트 업데이트
+        self.init_recommendation()  # 초기 텍스트 업데이트
         self.place(x=240, y=320, anchor="center")
         self['width'] = 30
         self['padding'] = 20
         self['command'] = self.clicked
 
-    def update_recommendation(self):
+    def init_recommendation(self):
         now = datetime.now().time()
         hour = now.hour
         if 6 <= hour < 11:
@@ -161,11 +159,27 @@ class RecommendButton(ttk.Button):
         else:
             self.config(text="저녁 추천 받기!")
 
+    def update_text(self, s):
+        if s == "breakfast":
+            self.config(text="아침 추천 받기!")
+        elif s == "lunch":
+            self.config(text="점심 추천 받기!")
+        else:
+            self.config(text="저녁 추천 받기!")
+        self.update()
+
     def clicked(self):
         logging.info(f'recommend button clicked')
 
-recommend_button = RecommendButton()
 
+########## main ##########
+BLD_index = BLDIndex()
+recommend_button = RecommendButton()
+calendar_button = CalendarButton()
+
+breakfast_button = BreakfastButton()
+lunch_button = LunchButton()
+dinner_button = DinnerButton()
 
 window.bind('<Escape>', lambda event: window.quit())
 window.mainloop()
