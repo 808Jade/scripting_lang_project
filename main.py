@@ -10,6 +10,85 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.scrolledtext import ScrolledText
 from datetime import datetime, timedelta
+import random
+import requests
+# url = "http://openapi.foodsafetykorea.go.kr/api/a91585442a9345bba0e1/I2790/json/1/1000/NUM=1"
+# response = requests.get(url)
+#
+# if response.status_code == 200:
+#     data = response.json()
+#     # 이제 'data' 변수에 API에서 반환된 JSON 데이터가 들어 있습니다.
+#     # 여기서 데이터를 분석하고 사용할 수 있습니다.
+# else:
+#     print("API에 액세스하는 데 문제가 발생했습니다. 상태 코드:", response.status_code)
+#
+# # 데이터에서 'I2790' 키의 값 추출
+# i2790_data = data['I2790']
+#
+# # 총 항목 수 추출
+# total_count = i2790_data['total_count']
+#
+# # 각 제품의 정보에 접근
+# products = i2790_data['row']
+#
+# for product in products:
+#     # 각 제품의 메이커 이름과 영양 정보 출력 예시
+#     maker_name = product['MAKER_NAME']
+#     nutr_cont1 = product['NUTR_CONT1']
+#     print("제품 메이커:", maker_name)
+#     print("1회 제공량의 영양 정보:", nutr_cont1)
+#     print("--------------------")
+
+# 초기 설정
+
+def food_founder():
+    global data_node
+    data_node = "D" + str(random.randint(0, 12151)).zfill(6)
+
+    base_url = "http://openapi.foodsafetykorea.go.kr/api/sample/I2790/json/"
+    food_cd = data_node
+    start_node = 1
+    node_limit = 1000
+
+    # 반복적으로 요청하여 원하는 음식 찾기
+    found_food = False
+    # 반복적으로 요청하여 원하는 음식 찾기
+    found_food = False
+    while not found_food:
+
+        if start_node > 12500:
+            data_node = "D" + str(random.randint(0, 12151)).zfill(6)
+            food_cd = data_node
+            print("검색 결과 존재하지 않는 food_cd입니다. 재검색합니다.")
+        # 요청 URL 설정
+        url = f"{base_url}{start_node}/{start_node + node_limit - 1}/FOOD_CD={food_cd}"
+
+
+        response = requests.get(url) # HTTP GET 요청 보내기
+        if response.status_code == 200: # 성공적인 응답 처리
+            data = response.json()
+            # 'RESULT' 키를 확인하여 데이터가 있는지 확인
+            if 'RESULT' in data and data['RESULT']['CODE'] == 'INFO-200':
+            # if 'RESULT' in data and data['RESULT']['MSG'] == '정상처리되었습니다.':
+                # 데이터가 없다는 메시지 출력 후 반복문 종료
+                print("더 이상 데이터가 없습니다.")
+                break
+
+            # 'row' 키가 있는지 확인하여 데이터가 있는지 확인
+            if 'row' in data['I2790']:
+                foods = data['I2790']['row']
+                for food in foods:
+                    if food['FOOD_CD'] == food_cd:
+                        # 원하는 음식을 찾았으므로 결과 출력
+                        print("찾은 음식:", food)
+                        found_food = True
+                        break
+        else:
+            print("API에 액세스하는 데 문제가 발생했습니다. 상태 코드:", response.status_code)
+
+        # 다음 요청을 위해 시작 노드 업데이트
+        start_node += node_limit
+
 
 ########## window ##########
 window = tk.Tk()
@@ -279,10 +358,14 @@ class RecommendButton(ttk.Button):
         self.update()
 
     def clicked(self):
-        logging.info(f'recommend button clicked')
+
+        logging.info(f'data node = {data_node}')
+        food_founder()
+
 
 
 ########## main ##########
+data_node = 0
 BLD_index = BLDIndex()
 menu_interface_button = MenuInterfaceButton()
 recommend_button = RecommendButton()
