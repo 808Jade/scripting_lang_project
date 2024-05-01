@@ -38,6 +38,12 @@ import requests
 #     print("제품 메이커:", maker_name)
 #     print("1회 제공량의 영양 정보:", nutr_cont1)
 #     print("--------------------")
+########## Global Variables ##########
+food_name = "f"
+current_kcal = 3
+current_carbohydrate = 3
+current_protein = 3
+current_fat = 3
 
 # 초기 설정
 
@@ -67,10 +73,8 @@ def food_founder():
         response = requests.get(url) # HTTP GET 요청 보내기
         if response.status_code == 200: # 성공적인 응답 처리
             data = response.json()
-            # 'RESULT' 키를 확인하여 데이터가 있는지 확인
+
             if 'RESULT' in data and data['RESULT']['CODE'] == 'INFO-200':
-            # if 'RESULT' in data and data['RESULT']['MSG'] == '정상처리되었습니다.':
-                # 데이터가 없다는 메시지 출력 후 반복문 종료
                 print("더 이상 데이터가 없습니다.")
                 break
 
@@ -82,6 +86,28 @@ def food_founder():
                         # 원하는 음식을 찾았으므로 결과 출력
                         print("찾은 음식:", food)
                         found_food = True
+
+                        global food_name, current_kcal, current_carbohydrate, current_protein, current_fat
+                        food_name = food['DESC_KOR']
+                        if food['NUTR_CONT1'] == '':
+                            current_kcal = 0
+                        else:
+                            current_kcal = round(float(food['NUTR_CONT1']))
+                        if food['NUTR_CONT2'] == '':
+                            current_carbohydrate = 0
+                        else:
+                            current_carbohydrate = round(float(food['NUTR_CONT2']))
+                        if food['NUTR_CONT3'] == '':
+                            current_protein = 0
+                        else:
+                            current_protein = round(float(food['NUTR_CONT3']))
+                        if food['NUTR_CONT4'] == '':
+                            current_fat = 0
+                        else:
+                            current_fat = round(float(food['NUTR_CONT4']))
+
+                        nutrient_label.init_current_nutrient()
+                        menu_interface_button.insert_new_text()
                         break
         else:
             print("API에 액세스하는 데 문제가 발생했습니다. 상태 코드:", response.status_code)
@@ -99,21 +125,30 @@ window.geometry("480x640+400+300")
 window.resizable(False, False)
 
 
-########## Global Variables ##########
 
 
 ########## menu interface button ##########
 class MenuInterfaceButton(tk.Button):
     def __init__(self, master=None, **kw):
         super().__init__(master, **kw)
-        self.image = tk.PhotoImage(file='exfood.png')
-        self.image = self.image.subsample(5, 5)
-        self['image'] = self.image
+        self.config(text="식품 이름")
+        self['width'] = 50
+        self['height'] = 6
+        self.place(x=60, y=20)
         self['command'] = self.clicked
-        self.place(x=120, y=20)
+
+    def insert_new_text(self):
+        self.config(text=f"{food_name}")
+        self.update()
 
     def clicked(self):
         logging.info(f'Interface button clicked')
+
+########## menu interface ##########
+class MenuInterfaceNUTR(tk.Label):
+    def __init__(self, master=None, **kw):
+        super().__init__(master, **kw)
+
 
 
 ########## direct Input box ##########
@@ -363,6 +398,53 @@ class RecommendButton(ttk.Button):
         food_founder()
 
 
+########## nutrient label ##########
+class NutrientLabel():
+    def __init__(self):
+        self.kcal_label = tk.Label(window, text="칼로리(Kcal)")
+        self.carbohydrate_label = tk.Label(window, text="탄수화물")
+        self.protein_label = tk.Label(window, text="단백질")
+        self.fat_label = tk.Label(window, text="지방")
+
+        self.kcal_label.place(x=70,y=150)
+        self.carbohydrate_label.place(x=70,y=180)
+        self.protein_label.place(x=70,y=210)
+        self.fat_label.place(x=70,y=240)
+
+    def init_current_nutrient(self):
+        self.kcal = tk.Label(window, text=f"{current_kcal}")
+        self.carbohydrate = tk.Label(window, text=f"{current_carbohydrate}")
+        self.protein = tk.Label(window, text=f"{current_protein}")
+        self.fat = tk.Label(window, text=f"{current_fat}")
+
+
+        # 칼로리 그대로
+        # 탄수화물 5배
+        # 단백질 20배
+        # 지방 50배
+
+        self.kcal.place(x=100, y=150)
+        self.carbohydrate.place(x=100, y=180)
+        self.protein.place(x=100, y=210)
+        self.fat.place(x=100, y=240)
+
+        # self.kcal.config(bg=f"{}")
+        # self.carbohydrate.config(bg=f"{}")
+        # self.protein.config(bg=f"{}")
+        # self.fat.config(bg=f"{}")
+
+########## etc ##########
+def decimal_to_hex(decimal):
+    if decimal < 0:
+        decimal = 0
+    elif decimal > 255:
+        decimal = 255
+
+    hex_value = hex(decimal)[2:]  # '0x'를 제거하기 위해 슬라이싱을 사용합니다.
+    if len(hex_value) == 1:
+        hex_value = '0' + hex_value  # 1자리 16진수 앞에 '0'을 추가합니다.
+    return hex_value.upper()  # 대문자로 변환합니다.
+
 
 ########## main ##########
 data_node = 0
@@ -374,6 +456,8 @@ calendar_button = CalendarButton()
 breakfast_button = BreakfastButton()
 lunch_button = LunchButton()
 dinner_button = DinnerButton()
+
+nutrient_label = NutrientLabel()
 
 window.bind('<Escape>', lambda event: window.quit())
 window.mainloop()
