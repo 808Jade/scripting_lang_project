@@ -50,7 +50,7 @@ current_fat = 3
 
 def food_founder():
     global data_node
-    data_node = "D" + str(random.randint(0, 2151)).zfill(6)
+    data_node = "D" + str(random.randint(0, 4151)).zfill(6)
 
     base_url = "http://openapi.foodsafetykorea.go.kr/api/sample/I2790/json/"
     food_cd = data_node
@@ -64,7 +64,7 @@ def food_founder():
     while not found_food:
 
         if start_node > 12500:
-            data_node = "D" + str(random.randint(0, 2151)).zfill(6)
+            data_node = "D" + str(random.randint(0, 4151)).zfill(6)
             food_cd = data_node
             print("검색 결과 존재하지 않는 food_cd입니다. 재검색합니다.")
         # 요청 URL 설정
@@ -113,6 +113,7 @@ def food_founder():
 
                         nutrient_label.init_current_nutrient()
                         menu_interface_button.insert_new_text()
+                        color_label.set_color()
                         break
         else:
             print("API에 액세스하는 데 문제가 발생했습니다. 상태 코드:", response.status_code)
@@ -407,9 +408,9 @@ class RecommendButton(ttk.Button):
 class NutrientLabel():
     def __init__(self):
         self.kcal_label = tk.Label(window, text="칼로리(Kcal)")
-        self.carbohydrate_label = tk.Label(window, text="탄수화물")
-        self.protein_label = tk.Label(window, text="단백질")
-        self.fat_label = tk.Label(window, text="지방")
+        self.carbohydrate_label = tk.Label(window, text="탄수화물 [R]")
+        self.protein_label = tk.Label(window, text="단백질    [G]")
+        self.fat_label = tk.Label(window, text="지방       [B]")
 
         self.kcal_label.place(x=70,y=150)
         self.carbohydrate_label.place(x=70,y=180)
@@ -447,6 +448,21 @@ class NutrientLabel():
         # self.carbohydrate.config(bg=f"{}")
         # self.protein.config(bg=f"{}")
         # self.fat.config(bg=f"{}")
+########## etc ##########
+class ColorInterface():
+    def __init__(self):
+        self.label = tk.Label(window, width=20, height=5)
+        self.label.place(x=230,y=170)
+
+    def set_color(self):
+        global current_protein, current_fat, current_carbohydrate
+        current_carbohydrate *= 4
+        current_protein *= 4
+        current_fat *= 9
+        print(current_carbohydrate, current_protein, current_fat)
+
+        self.label.config(bg=f"#{decimal_to_hex(current_carbohydrate)+decimal_to_hex(current_protein)+decimal_to_hex(current_fat)}")
+        self.label.update()
 
 ########## etc ##########
 def decimal_to_hex(decimal):
@@ -473,6 +489,7 @@ lunch_button = LunchButton()
 dinner_button = DinnerButton()
 
 nutrient_label = NutrientLabel()
+color_label = ColorInterface()
 
 window.bind('<Escape>', lambda event: window.quit())
 window.mainloop()
