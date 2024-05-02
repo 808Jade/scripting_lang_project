@@ -1,7 +1,5 @@
 import calendar
 import logging
-import tkinter.messagebox
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -14,14 +12,29 @@ from tkinter import messagebox
 from datetime import datetime, timedelta
 import random
 import requests
+import json
 
 ########## Global Variables ##########
+
 maker_name = ""
 food_name = "f"
 current_kcal = 3
 current_carbohydrate = 3
 current_protein = 3
 current_fat = 3
+
+global_rgb = ""
+
+# [일, 시간, rgb]
+global_data = []
+
+arr = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0]
+]
 
 # 초기 설정
 def direct_food_founder(string):
@@ -186,8 +199,27 @@ class MenuInterfaceButton(tk.Button):
         self.update()
 
     def clicked(self):
-        logging.info(f'Interface button clicked')
+        global  rgb1, rgb2, rgb3
 
+        if BLD_index.index == "breakfast":
+            rgb1 = global_rgb
+        elif BLD_index.index == "lunch":
+            rgb2 = global_rgb
+        elif BLD_index.index == "dinner":
+            rgb3 = global_rgb
+
+        logging.info(f'Interface button clicked')
+        logging.info(f'{rgb1}, {rgb2}, {rgb3}')
+
+        # 현재 날짜와 시간 가져오기
+        now = datetime.now()
+        date_time = now.strftime("%Y-%m-%d")
+        food_info = {"date": date_time, "time": BLD_index.index, "food": food_name, "RGB": global_rgb}
+
+        # JSON 파일에 데이터 추가
+        with open("JMC_log.json", "a") as f:
+            json.dump(food_info, f)
+            f.write("\n")
 
 ########## direct Input box ##########
 def direct_input(event=None):
@@ -285,10 +317,27 @@ class Calendar(tk.Toplevel):
                     label = tk.Label(self, text=day, bg="yellow")
                 else:
                     label = tk.Label(self, text=day)
-                label.grid(row=i, column=j, padx=24, pady=42)
 
-    def calendar_close(self):
-        pass
+                label.grid(row=i, column=j, padx=21, pady=42)
+
+
+        if rgb1 != "":
+            label1 = tk.Label(self, bg=f"{rgb1}", width=8)
+            label1.place(x=275,y=70)
+            label1.update()
+        if rgb2 != "":
+            label2 = tk.Label(self, bg=f"{rgb2}", width=8)
+            label2.place(x=275,y=90)
+            label2.update()
+        if rgb3 != "":
+            label3 = tk.Label(self, bg=f"{rgb3}", width=8)
+            label3.place(x=275,y=110)
+            label3.update()
+
+
+
+
+
 
     def calendar_destroy(self):
         self.destroy()
@@ -432,7 +481,6 @@ class RecommendButton(ttk.Button):
         self.update()
 
     def clicked(self):
-
         logging.info(f'data node = {data_node}')
         food_founder()
 
@@ -482,9 +530,13 @@ class ColorInterface():
         current_carbohydrate *= 4
         current_protein *= 4
         current_fat *= 9
-        print(current_carbohydrate, current_protein, current_fat)
 
-        self.label.config(bg=f"#{decimal_to_hex(current_carbohydrate)+decimal_to_hex(current_protein)+decimal_to_hex(current_fat)}")
+        global global_rgb, rgb1, rgb2, rgb3
+        global_rgb = f"#{decimal_to_hex(current_carbohydrate)+decimal_to_hex(current_protein)+decimal_to_hex(current_fat)}"
+
+
+
+        self.label.config(bg=f"{global_rgb}")
         self.label.update()
 
 ########## etc ##########
@@ -499,9 +551,9 @@ def decimal_to_hex(decimal):
         hex_value = '0' + hex_value
     return hex_value.upper()
 
-
 ########## main ##########
 data_node = 0
+
 BLD_index = BLDIndex()
 menu_interface_button = MenuInterfaceButton()
 recommend_button = RecommendButton()
@@ -513,6 +565,13 @@ dinner_button = DinnerButton()
 
 nutrient_label = NutrientLabel()
 color_label = ColorInterface()
+
+
+rgb1 = ""
+rgb2 = ""
+rgb3 = ""
+
+global_data = [ rgb1, rgb2, rgb3 ]
 
 window.bind('<Escape>', lambda event: window.quit())
 window.mainloop()
