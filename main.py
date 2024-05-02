@@ -39,6 +39,7 @@ import requests
 #     print("1회 제공량의 영양 정보:", nutr_cont1)
 #     print("--------------------")
 ########## Global Variables ##########
+maker_name = ""
 food_name = "f"
 current_kcal = 3
 current_carbohydrate = 3
@@ -49,7 +50,7 @@ current_fat = 3
 
 def food_founder():
     global data_node
-    data_node = "D" + str(random.randint(0, 12151)).zfill(6)
+    data_node = "D" + str(random.randint(0, 2151)).zfill(6)
 
     base_url = "http://openapi.foodsafetykorea.go.kr/api/sample/I2790/json/"
     food_cd = data_node
@@ -63,7 +64,7 @@ def food_founder():
     while not found_food:
 
         if start_node > 12500:
-            data_node = "D" + str(random.randint(0, 12151)).zfill(6)
+            data_node = "D" + str(random.randint(0, 2151)).zfill(6)
             food_cd = data_node
             print("검색 결과 존재하지 않는 food_cd입니다. 재검색합니다.")
         # 요청 URL 설정
@@ -87,8 +88,12 @@ def food_founder():
                         print("찾은 음식:", food)
                         found_food = True
 
-                        global food_name, current_kcal, current_carbohydrate, current_protein, current_fat
+                        global food_name, current_kcal, current_carbohydrate, current_protein, current_fat, maker_name
                         food_name = food['DESC_KOR']
+                        if food['MAKER_NAME'] == '':
+                            maker_name = ""
+                        else:
+                            maker_name = food['MAKER_NAME']
                         if food['NUTR_CONT1'] == '':
                             current_kcal = 0
                         else:
@@ -138,7 +143,7 @@ class MenuInterfaceButton(tk.Button):
         self['command'] = self.clicked
 
     def insert_new_text(self):
-        self.config(text=f"{food_name}")
+        self.config(text=f"[{maker_name}] {food_name}")
         self.update()
 
     def clicked(self):
@@ -411,22 +416,32 @@ class NutrientLabel():
         self.protein_label.place(x=70,y=210)
         self.fat_label.place(x=70,y=240)
 
-    def init_current_nutrient(self):
-        self.kcal = tk.Label(window, text=f"{current_kcal}")
-        self.carbohydrate = tk.Label(window, text=f"{current_carbohydrate}")
-        self.protein = tk.Label(window, text=f"{current_protein}")
-        self.fat = tk.Label(window, text=f"{current_fat}")
+        self.kcal = tk.Label(window, text=f"")
+        self.carbohydrate = tk.Label(window, text=f"")
+        self.protein = tk.Label(window, text=f"")
+        self.fat = tk.Label(window, text=f"")
 
+        self.kcal.place(x=150, y=150)
+        self.carbohydrate.place(x=150, y=180)
+        self.protein.place(x=150, y=210)
+        self.fat.place(x=150, y=240)
+    def init_current_nutrient(self):
+        self.kcal.config(text=f"{current_kcal}")
+        self.carbohydrate.config(text=f"{current_carbohydrate}")
+        self.protein.config(text=f"{current_protein}")
+        self.fat.config(text=f"{current_fat}")
+
+        self.kcal.update()
+        self.carbohydrate.update()
+        self.protein.update()
+        self.fat.update()
 
         # 칼로리 그대로
         # 탄수화물 5배
         # 단백질 20배
         # 지방 50배
 
-        self.kcal.place(x=100, y=150)
-        self.carbohydrate.place(x=100, y=180)
-        self.protein.place(x=100, y=210)
-        self.fat.place(x=100, y=240)
+
 
         # self.kcal.config(bg=f"{}")
         # self.carbohydrate.config(bg=f"{}")
